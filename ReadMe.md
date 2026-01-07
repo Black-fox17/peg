@@ -62,7 +62,7 @@ You can compile the project using `gcc`. Ensure you represent the directory stru
 Run this command from the root project directory:
 
 ```bash
-gcc src/main.c src/game.c src/board.c src/move.c src/history.c src/cell.c -I include -o game.exe
+gcc src/*.c -Iinclude -o game
 ```
 
 ### Running the Game:

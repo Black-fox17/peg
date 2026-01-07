@@ -22,11 +22,13 @@ bool game_play_move(game_t *game){
     }
 }
 
-void game_undo(game_t *game) {
+bool game_undo(game_t *game) {
     if (!history_is_empty(&game->history)) {
         move_t last = history_pop(&game->history);
         undo_move(&game->board, last);
+        return true;
     }
+    return false;
 }
 
 bool game_check_victory(const game_t *game) {
@@ -40,33 +42,59 @@ double game_get_time(const game_t *game) {
 
 void game_display(const game_t *game) {
     print_board(&game->board);
+    printf("Pegs remaining: %d\n", count_pegs(game->board));
+    printf("Time: %.0f s, Penalty: %d\n", game_get_time(game), game->penalty);
 }
 
 void game_over(game_t *game) {
+
+    // If exactly one peg is left on the board, the game is finished
     if (count_pegs(&game->board) == 1) {
         game->active = false;
         return;
     }
-    
-    for (int r=0; r<BOARD_SIZE; r++){
-        for(int c=0; c<BOARD_SIZE; c++){
-            if(game->board.board[r][c] == PEG){
-                int dr[] = {-2, 2, 0, 0};
-                int dc[] = {0, 0, -2, 2};
-                for(int i=0; i<4; i++){
+
+    // Iterate over every cell on the board
+    for (int r = 0; r < BOARD_SIZE; r++) {
+        for (int c = 0; c < BOARD_SIZE; c++) {
+
+            // Only consider cells that contain a peg
+            if (game->board.board[r][c] == PEG) {
+
+                // Possible jump directions (up, down, left, right)
+                // Each move jumps exactly two cells
+                int dr[] = { -2,  2,  0,  0 };
+                int dc[] = {  0,  0, -2,  2 };
+
+                // Try all four directions
+                for (int i = 0; i < 4; i++) {
                     move_t m;
-                    m.from_row = r; m.from_col = c;
-                    m.to_row = r + dr[i]; m.to_col = c + dc[i];
-                    m.over_row = r + dr[i]/2; m.over_col = c + dc[i]/2;
-                    if(is_valid_move(&game->board, m)) return;
+
+                    // Starting position of the move
+                    m.from_row = r;
+                    m.from_col = c;
+
+                    // Destination position after the jump
+                    m.to_row = r + dr[i];
+                    m.to_col = c + dc[i];
+
+                    // Position of the peg being jumped over (middle cell)
+                    m.over_row = r + dr[i] / 2;
+                    m.over_col = c + dc[i] / 2;
+
+                    // If at least one valid move exists, the game is not over
+                    if (is_valid_move(&game->board, m))
+                        return;
                 }
             }
         }
     }
 
+    // No valid moves found anywhere on the board -> game over
     game->active = false;
     return;
 }
+
 
 int main(){
     game_t game;
@@ -86,17 +114,21 @@ int main(){
                 printf("Goodbye!\n");
                 game.active = false;
             }else if(buffer[0] == 'u'){
-                printf("Undoing move...\n");
-                game_undo(&game);
+                if(game_undo(&game)) {
+                    printf("Undoing move...\n");
+                    game_display(&game);
+                } else {
+                    printf("You can't undo, undo is impossible\n");
+                }
             }else{
                 symbolized_move_t sym_move;
                 if(sscanf(buffer, "%c%c %c%c", &sym_move.from_row, &sym_move.from_col, &sym_move.to_row, &sym_move.to_col) == 4){
                     game.sym_move = sym_move;
                     if(game_play_move(&game)){
                         game_display(&game);
-                        printf("Pegs remaining: %d\n", count_pegs(&game.board));
                     } else {
                         printf("Invalid move. Try again.\n");
+                        printf("Time: %.0f s, Penalty: %d\n", game_get_time(&game), game.penalty);
                     }
                 } else {
                     printf("Invalid input format. Try again.\n");

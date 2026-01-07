@@ -23,7 +23,8 @@ void game_init(game_t *game);
 bool game_play_move(game_t *game);
 
 /// @brief Undo the last move
-void game_undo(game_t *game);
+/// @return true if undo was successful, false if history is empty
+bool game_undo(game_t *game);
 
 /// @brief Check if game is won/lost
 bool game_check_victory(const game_t *game);

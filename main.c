@@ -11,7 +11,6 @@ int main() {
     printf("Peg Solitaire\n");
     printf("Enter move: FROM TO (e.g., D2 D4)\n");
     printf("Format: [RowLetter][ColNumber] [RowLetter][ColNumber]\n");
-    printf("Type 'u' to undo last move.\n");
     printf("Enter 'q' to quit.\n");
 
     print_board(&game);

@@ -30,16 +30,16 @@ int main() {
         }
 
         char r1_char, r2_char;
-        int c1_val, c2_val;
+        char c1_char, c2_char;
         
-        int parsed = sscanf(buffer, " %c%c %c%c", &r1_char, &c1_val, &r2_char, &c2_val);
+        int parsed = sscanf(buffer, " %c%c %c%c", &r1_char, &c1_char, &r2_char, &c2_char);
 
         if (parsed == 4) {
             symbolized_move_t symbolized_move;
             symbolized_move.from_row = r1_char;
-            symbolized_move.from_col = c1_val;
+            symbolized_move.from_col = c1_char;
             symbolized_move.to_row = r2_char;
-            symbolized_move.to_col = c2_val;
+            symbolized_move.to_col = c2_char;
             move = convert(symbolized_move);
             r1 = move.from_row;
             r2 = move.to_row;

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "board.h"
 
 void create_board(board_t *board) {
     int r, c;

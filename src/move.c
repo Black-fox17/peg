@@ -1,3 +1,5 @@
+#include "move.h"
+
 bool is_valid_move(const board_t *board, move_t move) {
     if(move.from_row < 0 || move.from_row >= 7 ||
         move.from_col < 0 || move.from_col >= 7 ||
@@ -25,7 +27,7 @@ bool is_valid_move(const board_t *board, move_t move) {
         return false;
     }
 
-    // Midpoint check
+
     if(move.over_row != move.from_row + dr / 2 ||
         move.over_col != move.from_col + dc / 2) {
         return false;
@@ -49,7 +51,7 @@ void undo_move(board_t *board, move_t move) {
 }
 
 
-move_t convert_move(symbolized_move_t move){
+move_t convert(symbolized_move_t move){
     move_t move_converted;
     move_converted.from_row = move.from_row - 'A';
     move_converted.from_col = move.from_col - '1';

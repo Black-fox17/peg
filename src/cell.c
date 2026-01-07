@@ -1,3 +1,6 @@
+#include "cell.h"
+#include "board.h"   
+
 cell check_cell(const board_t *board, int row, int col) {
     if (row < 0 || row >= BOARD_SIZE || col < 0 || col >= BOARD_SIZE) {
         return INVALID;

@@ -1,4 +1,5 @@
 #include "history.h"
+#include "move.h"
 
 void history_init(history_t *h) {
     h->count = 0;

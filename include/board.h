@@ -48,6 +48,11 @@ int count_pegs(const board_t *board);
 /// @param move how to move
 void apply_move(board_t *board,move_t move);
 
+/// @brief undo the move
+/// @param board the board to undo on
+/// @param move the move to reverse
+void undo_move(board_t *board, move_t move);
+
 
 /// @brief check if there's no valid move left or has solved 
 /// @param board the board to check

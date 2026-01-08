@@ -1,38 +1,38 @@
 #include "move.h"
 #include <ctype.h>
 
-bool is_valid_move(const board_t *board, move_t move) {
-    if(move.from_row < 0 || move.from_row >= 7 ||
-        move.from_col < 0 || move.from_col >= 7 ||
-        move.over_row < 0 || move.over_row >= 7 ||
-        move.over_col < 0 || move.over_col >= 7 ||
-        move.to_row   < 0 || move.to_row   >= 7 ||
-        move.to_col   < 0 || move.to_col   >= 7) {
-        return false;
-    }
-
-    if(check_cell(board, move.from_row, move.from_col) != PEG)
+bool is_valid_move(const board_t *board, move_t m)
+{
+    if (m.from_row < 0 || m.from_row >= BOARD_SIZE ||
+        m.from_col < 0 || m.from_col >= BOARD_SIZE ||
+        m.over_row < 0 || m.over_row >= BOARD_SIZE ||
+        m.over_col < 0 || m.over_col >= BOARD_SIZE ||
+        m.to_row   < 0 || m.to_row   >= BOARD_SIZE ||
+        m.to_col   < 0 || m.to_col   >= BOARD_SIZE)
         return false;
 
-    if(check_cell(board, move.over_row, move.over_col) != PEG)
+    if (check_cell(board, m.from_row, m.from_col) == INVALID ||
+        check_cell(board, m.over_row, m.over_col) == INVALID ||
+        check_cell(board, m.to_row,   m.to_col)   == INVALID)
         return false;
 
-    if(check_cell(board, move.to_row, move.to_col) != EMPTY)
+    if (check_cell(board, m.from_row, m.from_col) != PEG)
         return false;
 
-    int dr = move.to_row - move.from_row;
-    int dc = move.to_col - move.from_col; 
-
-    if(!((dr == 0 && (dc == 2 || dc == -2)) ||
-          (dc == 0 && (dr == 2 || dr == -2)))) {
+    if (check_cell(board, m.over_row, m.over_col) != PEG)
         return false;
-    }
 
-
-    if(move.over_row != move.from_row + dr / 2 ||
-        move.over_col != move.from_col + dc / 2) {
+    if (check_cell(board, m.to_row, m.to_col) != EMPTY)
         return false;
-    }
+    int dr = m.to_row - m.from_row;
+    int dc = m.to_col - m.from_col;
+
+    if (!((dr == 0 && (dc == 2 || dc == -2)) ||
+          (dc == 0 && (dr == 2 || dr == -2))))
+        return false;
+    if (m.over_row != m.from_row + dr / 2 ||
+        m.over_col != m.from_col + dc / 2)
+        return false;
 
     return true;
 }

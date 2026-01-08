@@ -3,55 +3,34 @@
 
 void game_init(game_t *game) {
     create_board(&game->board);
-    history_init(&game->history);
-    game->active = true;
-    game->start_time = time(NULL);
-    game->penalty = 0;
+    game->moves = 0;
 }
 
-bool game_play_move(game_t *game){
-    move_t m = convert(game->sym_move);
+bool game_play_move(game_t *game, symbolized_move_t move){
+    move_t m = convert(move);
     
     if (is_valid_move(&game->board, m)) {
         apply_move(&game->board, m);
-        history_push(&game->history, m);
+        game->moves++;
         return true;
     } else {
-        game->penalty++; 
         return false;
     }
-}
-
-bool game_undo(game_t *game) {
-    if (!history_is_empty(&game->history)) {
-        move_t last = history_pop(&game->history);
-        undo_move(&game->board, last);
-        return true;
-    }
-    return false;
 }
 
 bool game_check_victory(const game_t *game) {
     return count_pegs(&game->board) == 1;
 }
 
-double game_get_time(const game_t *game) {
-    time_t now = time(NULL);
-    return difftime(now, game->start_time);
-}
-
 void game_display(const game_t *game) {
     print_board(&game->board);
+    printf("Valid Moves: %d\n", game->moves);
     printf("Pegs remaining: %d\n", count_pegs(&game->board));
-    printf("Time: %.0f s, Penalty: %d\n", game_get_time(game), game->penalty);
 }
 
-void game_over(game_t *game) {
-
-    // If exactly one peg is left on the board, the game is finished
+bool game_over(game_t *game) {
     if (count_pegs(&game->board) == 1) {
-        game->active = false;
-        return;
+        return true;
     }
 
     // Iterate over every cell on the board
@@ -84,13 +63,10 @@ void game_over(game_t *game) {
 
                     // If at least one valid move exists, the game is not over
                     if (is_valid_move(&game->board, m))
-                        return;
+                        return false;
                 }
             }
         }
     }
-
-    // No valid moves found anywhere on the board -> game over
-    game->active = false;
-    return;
+    return true;
 }

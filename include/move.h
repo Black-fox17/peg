@@ -25,10 +25,6 @@ move_t convert(symbolized_move_t move);
 /// @param move how to move
 void apply_move(board_t *board,move_t move);
 
-/// @brief undo the move
-/// @param board the board to undo on
-/// @param move the move to reverse
-void undo_move(board_t *board, move_t move);
 
 /// @brief check if the move is valid
 /// @param board the board to check

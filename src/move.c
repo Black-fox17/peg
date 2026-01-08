@@ -1,4 +1,5 @@
 #include "move.h"
+#include <ctype.h>
 
 bool is_valid_move(const board_t *board, move_t move) {
     if(move.from_row < 0 || move.from_row >= 7 ||
@@ -43,19 +44,11 @@ void apply_move(board_t *board, move_t move) {
     set_cell(board, move.to_row, move.to_col, PEG);
 }
 
-void undo_move(board_t *board, move_t move) {
-    // Reverse apply: to->EMPTY, over->PEG, from->PEG
-    set_cell(board, move.to_row, move.to_col, EMPTY);
-    set_cell(board, move.over_row, move.over_col, PEG);
-    set_cell(board, move.from_row, move.from_col, PEG);
-}
-
-
 move_t convert(symbolized_move_t move){
     move_t move_converted;
-    move_converted.from_row = move.from_row - 'A';
+    move_converted.from_row = toupper(move.from_row) - 'A';
     move_converted.from_col = move.from_col - '1';
-    move_converted.to_row = move.to_row - 'A';
+    move_converted.to_row = toupper(move.to_row) - 'A';
     move_converted.to_col = move.to_col - '1';
     move_converted.over_row = (move_converted.from_row + move_converted.to_row) / 2;
     move_converted.over_col = (move_converted.from_col + move_converted.to_col) / 2;

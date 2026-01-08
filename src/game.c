@@ -24,7 +24,7 @@ bool game_check_victory(const game_t *game) {
 
 void game_display(const game_t *game) {
     print_board(&game->board);
-    printf("Valid Moves: %d\n", game->moves);
+    printf("Total Moves: %d\n", game->moves);
     printf("Pegs remaining: %d\n", count_pegs(&game->board));
 }
 

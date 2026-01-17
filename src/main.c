@@ -1,50 +1,98 @@
-#include "game.h"
+#include "students.h"
 #include <stdio.h>
+#include <stdlib.h>
 
-symbolized_move_t read_move() {
-    symbolized_move_t sm = {0};
-    char buf[100];
-    if (fgets(buf, sizeof(buf), stdin)) {
-        sscanf(buf, " %c%c %c%c", &sm.from_row, &sm.from_col, &sm.to_row, &sm.to_col);
+int main(void) {
+    
+    printf("Creating empty linked list\n");
+    linked_list_t *list = create_linked_list();
+    printf("List created. Size: %zu\n\n", list->size);
+
+    printf("Testing insert_at_head\n");
+    insert_at_head(list, 10);
+    printf("Inserted 10 at head: ");
+    print_linked_list(list);
+    
+    insert_at_head(list, 20);
+    printf("Inserted 20 at head: ");
+    print_linked_list(list);
+    
+    insert_at_head(list, 30);
+    printf("Inserted 30 at head: ");
+    print_linked_list(list);
+    printf("Current size: %zu\n\n", list->size);
+
+    printf("Testing insert_at_tail\n");
+    insert_at_tail(list, 5);
+    printf("Inserted 5 at tail: ");
+    print_linked_list(list);
+    
+    insert_at_tail(list, 1);
+    printf("Inserted 1 at tail: ");
+    print_linked_list(list);
+    printf("Current size: %zu\n\n", list->size);
+
+    printf("Testing insert_at_position\n");
+    insert_at_position(list, 15, 2);
+    printf("Inserted 15 at position 2: ");
+    print_linked_list(list);
+    printf("Current size: %zu\n\n", list->size);
+
+    printf("Testing delete_at_head\n");
+    delete_at_head(list);
+    printf("Deleted head: ");
+    print_linked_list(list);
+    printf("Current size: %zu\n\n", list->size);
+
+    printf("Testing delete_at_tail\n");
+    delete_at_tail(list);
+    printf("Deleted tail: ");
+    print_linked_list(list);
+    printf("Current size: %zu\n\n", list->size);
+
+    printf("Testing delete_at_position\n");
+    delete_at_position(list, 1);
+    printf("Deleted position 1: ");
+    print_linked_list(list);
+    printf("Current size: %zu\n\n", list->size);
+
+    printf("Cleaning up basic list\n");
+    destroy_linked_list(list);
+    printf("List destroyed\n\n");
+
+    printf("Testing parse_student with sample line\n");
+    const char *test_line = "Test Student,99999,2,201:4:87.5,202:3:91.0";
+    student_t *student = parse_student(test_line);
+    if (student) {
+        print_student(student);
+        free(student->grades);
+        free(student->name);
+        free(student);
+    } else {
+        printf("Failed to parse student\n");
     }
-    return sm;
-}
-int main(){
-    char buffer[100];
-    char choice;
 
-    do {
-        game_t game;
-
-        game_init(&game);
-        printf("Peg Solitaire\n");
-        printf("Enter move: FROM TO (e.g., D2 D4)\n");
-        printf("Format: [RowLetter][ColNumber] [RowLetter][ColNumber]\n");
-
-        game_display(&game);
-
-        while(!game_over(&game)){
-            symbolized_move_t sym_move = read_move();
-            if(game_play_move(&game, sym_move)){
-                game_display(&game);
-            } else {
-                printf("Invalid move. Try again.\n");
-            }
+    printf("Testing read_students from test_students.txt\n");
+    linked_list_t *students_list = read_students("test_students.txt");
+    
+    if (students_list) {
+        printf("Successfully read students file\n");
+        printf("Total entries in list: %zu\n\n", students_list->size);
+        
+        printf("Student data from file:\n");
+        node_t *current = students_list->head;
+        int count = 1;
+        while (current) {
+            printf("Entry %d (stored as data value: %d)\n", count++, current->data);
+            current = current->next;
         }
-        if (game_check_victory(&game)){
-            printf("Congratulations you just solved the puzzle!\n");
-        } else {
-            printf("Game Over! No more moves possible.\n");
-        }
+        
+        destroy_linked_list(students_list);
+        printf("\nStudents list destroyed\n");
+    } else {
+        printf("Failed to read students file\n");
+    }
 
-        printf("Play again? (y/n): ");
-        if (fgets(buffer, sizeof(buffer), stdin)) {
-            choice = buffer[0];
-        } else {
-            choice = 'n';
-        }
-
-    } while (choice == 'y' || choice == 'Y');
-
+    printf("\n=== ALL TESTS COMPLETED ===\n");
     return 0;
 }

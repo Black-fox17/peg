@@ -1,0 +1,1 @@
+RUn with g++ file_clean.cpp -o file_clean && file_clean.exe spacy.txt
